@@ -288,7 +288,7 @@ void write_block_bitmap(int fd)
 
     // Set the remaining blocks (24-1023) as free
     memset(map_value + 24, 0, BLOCK_SIZE - 24);
-	memset(map_value + BLOCK_SIZE, 1, 8192);
+	//memset(map_value + BLOCK_SIZE, 1, 8192);
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
