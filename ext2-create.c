@@ -289,7 +289,7 @@ void write_block_bitmap(int fd)
 
     // Clear the bits corresponding to free blocks
     // Example: Mark blocks 24 to 1023 as free
-    for (int i = LAST_BLOCK; i < NUM_BLOCKS; ++i)
+    for (int i = LAST_BLOCK; i < NUM_BLOCKS - 1; ++i)
     {
         map_value[i / 8] &= ~(1 << (i % 8));
     }
