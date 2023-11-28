@@ -286,10 +286,10 @@ void write_block_bitmap(int fd)
 	u8 map_value[BLOCK_SIZE] = {0xFF};
 
     // Mark the blocks from 24 to 1023 as free
-    for (int i = 24; i <= 1023; ++i) {
+    for (int i = 23; i <= 1023; ++i) {
         map_value[i / 8] &= ~(1 << (i % 8));
     }
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < 23; ++i) {
         map_value[i / 8] |= (1 << (i % 8));
     }
 
