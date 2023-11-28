@@ -466,42 +466,21 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	
-    off_t off = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
-    off = lseek(fd, off, SEEK_SET);
+	off_t off = lseek(fd, BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO), SEEK_SET);
     if (off == -1) {
         errno_exit("lseek");
     }
 
-    // Skip over "." and ".." entries
-    struct ext2_dir_entry dot_entry, dot_dot_entry;
-    ssize_t read_size = read(fd, &dot_entry, sizeof(dot_entry));
-    if (read_size != sizeof(dot_entry)) {
-        errno_exit("read");
+    const char *hello_world_data = "Hello world\n";
+    size_t data_length = strlen(hello_world_data);
+
+    if (write(fd, hello_world_data, data_length) != data_length) {
+        errno_exit("write");
     }
 
-    read_size = read(fd, &dot_dot_entry, sizeof(dot_dot_entry));
-    if (read_size != sizeof(dot_dot_entry)) {
-        errno_exit("read");
-    }
-
-    // Move the file descriptor back to the correct position for writing
-    off -= (dot_entry.rec_len + dot_dot_entry.rec_len);
-    off_t write_off = lseek(fd, off, SEEK_SET);
-    if (write_off == -1) {
-        errno_exit("lseek");
-    }
-
-    // Now you can write the hello-world entry from the correct position
-    struct ext2_dir_entry hello_world_entry = {0};
-    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
-    dir_entry_write(hello_world_entry, fd);
-
-    // TODO: Add other directory entries as needed
-
-    struct ext2_dir_entry fill_entry = {0};
-    fill_entry.rec_len = BLOCK_SIZE - (off - BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO));
-    dir_entry_write(fill_entry, fd);
+	struct ext2_dir_entry hwfb = {0};
+	dir_entry_set(hwfb, LOST_AND_FOUND_INO, "hello-world");
+	dir_entry_write(hwfb, fd);
 }
 
 int main(int argc, char *argv[]) {
