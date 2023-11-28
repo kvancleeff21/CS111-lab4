@@ -311,6 +311,13 @@ void write_inode_bitmap(int fd)
 
 	// TODO It's all yours
 	u8 map_value[BLOCK_SIZE];
+	memset(map_value, 0xFF, BLOCK_SIZE);
+
+    
+    for (int i = 13; i < NUM_INODES; ++i)
+    {
+        map_value[i / 8] &= ~(1 << (i % 8));
+    }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
