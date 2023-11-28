@@ -204,8 +204,8 @@ void write_superblock(int fd) {
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
 	superblock.s_free_inodes_count = NUM_FREE_INODES;
 	superblock.s_first_data_block = 1; /* First Data Block */
-	superblock.s_log_block_size = 1;					/* 1024 */
-	superblock.s_log_frag_size = 1;						/* 1024 */
+	superblock.s_log_block_size = 0;					/* 1024 */
+	superblock.s_log_frag_size = 0;						/* 1024 */
 	superblock.s_blocks_per_group = 8192;
 	superblock.s_frags_per_group = 8192;
 	superblock.s_inodes_per_group = NUM_INODES;
