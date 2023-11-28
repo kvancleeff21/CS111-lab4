@@ -283,12 +283,12 @@ void write_block_bitmap(int fd)
 	}
 
 	// TODO It's all yours
-	u8 map_value[BLOCK_SIZE] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-                                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+	u8 map_value[BLOCK_SIZE] = {0xFF};
 
-    // Set the remaining blocks (24-1023) as free
-    memset(map_value + 24, 0, BLOCK_SIZE - 24);
-	//memset(map_value + BLOCK_SIZE, 1, 8192);
+    // Mark the blocks from 24 to 1023 as free
+    for (int i = 24; i <= 1023; ++i) {
+        map_value[i / 8] &= ~(1 << (i % 8));
+    }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
