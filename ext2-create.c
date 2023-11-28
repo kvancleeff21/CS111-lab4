@@ -206,8 +206,8 @@ void write_superblock(int fd) {
 	superblock.s_first_data_block = 1; /* First Data Block */
 	superblock.s_log_block_size = 0;					/* 1024 */
 	superblock.s_log_frag_size = 0;						/* 1024 */
-	superblock.s_blocks_per_group = 8192;
-	superblock.s_frags_per_group = 8192;
+	superblock.s_blocks_per_group = 1024;
+	superblock.s_frags_per_group = 1024;
 	superblock.s_inodes_per_group = NUM_INODES;
 	superblock.s_mtime = 0;				/* Mount time */
 	superblock.s_wtime = current_time;	/* Write time */
@@ -287,10 +287,10 @@ void write_block_bitmap(int fd)
 
     // Mark the blocks from 24 to 1023 as free
     for (int i = 23; i <= 1023; ++i) {
-        map_value[i] &= ~(1 << (i % 8));
+        map_value[i/8] &= ~(1 << (i % 8));
     }
 	for (int i = 0; i < 23; ++i) {
-        map_value[i] |= (1 << (i % 8));
+        map_value[i/8] |= (1 << (i % 8));
     }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
