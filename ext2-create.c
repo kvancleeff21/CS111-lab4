@@ -467,11 +467,10 @@ void write_lost_and_found_dir_block(int fd) {
 void write_hello_world_file_block(int fd)
 {
 	off_t off = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
-	off = lseek(fd, off, SEEK_SET);
+	off = lseek(fd, off + 24, SEEK_SET);
 	if (off == -1) {
 		errno_exit("lseek");
 	}
-	off = off + 24;
 	
 	ssize_t bytes_remaining = BLOCK_SIZE - 24;
 
