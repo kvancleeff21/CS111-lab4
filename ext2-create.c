@@ -263,7 +263,7 @@ void write_block_group_descriptor_table(int fd) {
 	// TODO finish the block group descriptor number setting
 	block_group_descriptor.bg_block_bitmap = 3;
 	block_group_descriptor.bg_inode_bitmap = 4;
-	block_group_descriptor.bg_inode_table = 20;
+	block_group_descriptor.bg_inode_table = 5;
 	block_group_descriptor.bg_free_blocks_count = 1000;
 	block_group_descriptor.bg_free_inodes_count = 115;
 	block_group_descriptor.bg_used_dirs_count = 2;
