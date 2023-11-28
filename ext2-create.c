@@ -466,21 +466,27 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	off_t off = lseek(fd, BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO), SEEK_SET);
-    if (off == -1) {
+	off_t lost_and_found_offset = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
+
+    // Seek to the lost+found directory entry position
+    if (lseek(fd, lost_and_found_offset, SEEK_SET) == -1) {
         errno_exit("lseek");
     }
+	
+	struct ext2_dir_entry hello_world_entry = {0};
+    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
+
+    // Find the offset for the lost+found directory entry in the block
+    
+    // Write the directory entry for "hello-world"
+    dir_entry_write(hello_world_entry, fd);
 	const char *hello_world_data = "Hello world\n";
     size_t data_length = strlen(hello_world_data);
 
     if (write(fd, hello_world_data, data_length) != data_length) {
         errno_exit("write");
     }
-	struct ext2_dir_entry hello_world_entry = {0};
-    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
-
-    // Write the directory entry to the "lost+found" directory block
-    dir_entry_write(hello_world_entry, fd);
+	
 }
 
 int main(int argc, char *argv[]) {
