@@ -283,7 +283,7 @@ void write_block_bitmap(int fd)
 	}
 
 	// TODO It's all yours
-	u8 map_value[BLOCK_SIZE];
+	u8 map_value[BLOCK_SIZE] = {0xFF};
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
