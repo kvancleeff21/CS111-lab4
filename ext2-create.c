@@ -466,21 +466,32 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	struct ext2_dir_entry hello_world_entry = {0};
-    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
-
-    // Find the offset for the lost+found directory entry in the block
-    off_t lost_and_found_offset = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
-
-    // Seek to the next position in the lost+found directory entry
-    if (lseek(fd, lost_and_found_offset, SEEK_SET) == -1) {
+	off_t off = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
+    off = lseek(fd, off, SEEK_SET);
+    if (off == -1) {
         errno_exit("lseek");
     }
 
-    // Write the directory entry for "hello-world"
+    ssize_t bytes_remaining = BLOCK_SIZE;
+
+    // Skip over "." and ".." entries
+    struct ext2_dir_entry dot_entry, dot_dot_entry;
+    ssize_t read_size = read(fd, &dot_entry, sizeof(dot_entry));
+    if (read_size != sizeof(dot_entry)) {
+        errno_exit("read");
+    }
+
+    read_size = read(fd, &dot_dot_entry, sizeof(dot_dot_entry));
+    if (read_size != sizeof(dot_dot_entry)) {
+        errno_exit("read");
+    }
+
+    off += dot_entry.rec_len + dot_dot_entry.rec_len;
+
+    // Now you can write the hello-world entry from the correct position
+    struct ext2_dir_entry hello_world_entry = {0};
+    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
     dir_entry_write(hello_world_entry, fd);
-	
-	
 }
 
 int main(int argc, char *argv[]) {
