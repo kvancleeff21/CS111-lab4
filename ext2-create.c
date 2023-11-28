@@ -466,35 +466,24 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	off_t off = lseek(fd, BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO), SEEK_SET);
-    if (off == -1) {
-        errno_exit("lseek");
-    }
-
-    const char *hello_world_data = "Hello world\n";
-    size_t data_length = strlen(hello_world_data);
-
-    if (write(fd, hello_world_data, data_length) != data_length) {
-        errno_exit("write");
-    }
-
-	ssize_t bytes_remaining = BLOCK_SIZE;
-
-	struct ext2_dir_entry parent_entry = {0};
-	dir_entry_set(parent_entry, LOST_AND_FOUND_INO, "..");
-	dir_entry_write(parent_entry, fd);
-
-	bytes_remaining -= parent_entry.rec_len;
+	off_t off = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
+	off = lseek(fd, off, SEEK_SET);
+	if (off == -1) {
+		errno_exit("lseek");
+	}
+	off = off + 24;
+	
+	ssize_t bytes_remaining = BLOCK_SIZE - 24;
 
 	struct ext2_dir_entry current_entry = {0};
 	dir_entry_set(current_entry, HELLO_WORLD_INO, "hello-world");
 	dir_entry_write(current_entry, fd);
-
+	
 	bytes_remaining -= current_entry.rec_len;
 
 	struct ext2_dir_entry fill_entry = {0};
-	fill_entry.rec_len = bytes_remaining;
-	dir_entry_write(fill_entry, fd);
+    fill_entry.rec_len = bytes_remaining;
+    dir_entry_write(fill_entry, fd);
 }
 
 int main(int argc, char *argv[]) {
