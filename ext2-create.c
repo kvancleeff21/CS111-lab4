@@ -284,14 +284,14 @@ void write_block_bitmap(int fd)
 
 	// TODO It's all yours
 	u8 map_value[BLOCK_SIZE];
-	
-	memset(map_value, 0, BLOCK_SIZE);
 
-    // Set the bits corresponding to used blocks
-    // Example: Mark blocks 0 to 23 as used (reserve the initial blocks)
-    for (int i = 0; i < LAST_BLOCK; ++i)
+	memset(map_value, 0xFF, BLOCK_SIZE);
+
+    // Clear the bits corresponding to free blocks
+    // Example: Mark blocks 24 to 1023 as free
+    for (int i = LAST_BLOCK; i < NUM_BLOCKS; ++i)
     {
-        map_value[i / 8] |= (1 << (i % 8));
+        map_value[i / 8] &= ~(1 << (i % 8));
     }
 
 
