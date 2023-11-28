@@ -405,7 +405,7 @@ void write_inode_table(int fd) {
 	hello_inode.i_mtime = current_time;
 	hello_inode.i_dtime = 0;
 	hello_inode.i_links_count = 1;
-	hello_inode.i_blocks = 2;
+	hello_inode.i_blocks = 0;
 	write_inode(fd, HELLO_INO, &hello_inode);
 }
 
