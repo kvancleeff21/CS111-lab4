@@ -466,7 +466,16 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	// TODO It's all yours
+	off_t off = lseek(fd, BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO), SEEK_SET);
+    if (off == -1) {
+        errno_exit("lseek");
+    }
+	const char *hello_world_data = "Hello world\n";
+    size_t data_length = strlen(hello_world_data);
+
+    if (write(fd, hello_world_data, data_length) != data_length) {
+        errno_exit("write");
+    }
 }
 
 int main(int argc, char *argv[]) {
