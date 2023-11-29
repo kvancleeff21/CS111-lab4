@@ -453,9 +453,9 @@ void write_root_dir_block(int fd)
 
 	bytes_remaining -= symlink.rec_len;
 
-	struct ext2_dir_entry fill_entry = {0};
-    fill_entry.rec_len = bytes_remaining;
-    dir_entry_write(fill_entry, fd);
+	struct ext2_dir_entry fill_entry5 = {0};
+    fill_entry5.rec_len = bytes_remaining;
+    dir_entry_write(fill_entry5, fd);
 }
 
 void write_lost_and_found_dir_block(int fd) {
