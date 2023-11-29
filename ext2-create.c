@@ -437,8 +437,25 @@ void write_root_dir_block(int fd)
 
 	struct ext2_dir_entry fill_entry = {0};
 	dir_entry_set(fill_entry, LOST_AND_FOUND_INO, "lost+found");
-	fill_entry.rec_len = bytes_remaining;
 	dir_entry_write(fill_entry, fd);
+
+	bytes_remaining -= fill_entry.rec_len;
+
+	struct ext2_dir_entry hello_world_entry = {0};
+	dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
+	dir_entry_write(hello_world_entry, fd);
+	
+	bytes_remaining -= hello_world_entry.rec_len;
+
+	struct ext2_dir_entry symlink = {0};
+	dir_entry_set(symlink, HELLO_INO, "hello");
+	dir_entry_write(symlink, fd);
+
+	bytes_remaining -= symlink.rec_len;
+
+	struct ext2_dir_entry fill_entry = {0};
+    fill_entry.rec_len = bytes_remaining;
+    dir_entry_write(fill_entry, fd);
 }
 
 void write_lost_and_found_dir_block(int fd) {
@@ -479,30 +496,6 @@ void write_hello_world_file_block(int fd)
     if (write(fd, hello_world_data, data_length) != data_length) {
         errno_exit("write");
     }
-	
-	off_t off = BLOCK_OFFSET(LOST_AND_FOUND_DIR_BLOCKNO);
-	off = lseek(fd, off + 24, SEEK_SET);
-	if (off == -1) {
-		errno_exit("lseek");
-	}
-	
-	ssize_t bytes_remaining = BLOCK_SIZE - 24;
-
-	struct ext2_dir_entry current_entry = {0};
-	dir_entry_set(current_entry, HELLO_WORLD_INO, "hello-world");
-	dir_entry_write(current_entry, fd);
-	
-	bytes_remaining -= current_entry.rec_len;
-
-	struct ext2_dir_entry symlink = {0};
-	dir_entry_set(symlink, HELLO_INO, "hello");
-	dir_entry_write(symlink, fd);
-
-	bytes_remaining -= symlink.rec_len;
-
-	struct ext2_dir_entry fill_entry = {0};
-    fill_entry.rec_len = bytes_remaining;
-    dir_entry_write(fill_entry, fd);
 }
 
 int main(int argc, char *argv[]) {
