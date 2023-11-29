@@ -406,6 +406,9 @@ void write_inode_table(int fd) {
 	hello_inode.i_dtime = 0;
 	hello_inode.i_links_count = 1;
 	hello_inode.i_blocks = 0;
+	const char* target_path = "hello-world";
+	size_t path_length = strlen(target_path);
+	memcpy(hello_inode.i_block, target_path, path_length);
 	write_inode(fd, HELLO_INO, &hello_inode);
 }
 
@@ -485,7 +488,7 @@ void write_hello_world_file_block(int fd)
 	dir_entry_write(symlink, fd);
 
 	bytes_remaining -= symlink.rec_len;
-	
+
 	struct ext2_dir_entry fill_entry = {0};
     fill_entry.rec_len = bytes_remaining;
     dir_entry_write(fill_entry, fd);
